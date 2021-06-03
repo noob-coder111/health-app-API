@@ -1,5 +1,4 @@
 fastapi
 uvicorn
 httptools
-uviloop
 gunicorn==19.9.0
