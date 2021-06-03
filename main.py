@@ -16,8 +16,9 @@
 # dynamodb_client = boto3.client('dynamodb', region_name="ap-south-1")
 
 # # Creating the DynamoDB Table Resource
-# dynamodb_client = boto3.client('dynamodb', region_name="ap-south-1",aws_access_key_id="AKIAWHB3NDZVSH6FQQ4I",
-    aws_secret_access_key="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",
+# dynamodb_client = boto3.client('dynamodb', region_name="ap-south-1",
+    aws_access_key_id="AKIAWHB3NDZVSH6FQQ4I",
+    aws_secret_access_key="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"
     )
 
 # table = dynamodb.Table(TABLE_NAME)
