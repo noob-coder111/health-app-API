@@ -2,3 +2,4 @@ fastapi
 uvicorn
 httptools
 gunicorn==19.9.0
+boto3
