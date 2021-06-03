@@ -1,28 +1,4 @@
-# import boto3
-# from pydantic.main import BaseModel
-# import json
-# from pydantic import BaseModel
-# from typing import List
-# from fastapi import FastAPI
-# from boto3.dynamodb.conditions import Key,Attr
 
-
-# app=FastAPI()
-
-
-# TABLE_NAME = "resultTable"
-
-# # Creating the DynamoDB Client
-# dynamodb_client = boto3.client('dynamodb', region_name="ap-south-1")
-
-# # Creating the DynamoDB Table Resource
-# dynamodb_client = boto3.client('dynamodb',
-    
-    )
-
-# table = dynamodb.Table(TABLE_NAME)
-
-# #app.include_router(doctor.router)
 import boto3
 from pydantic.main import BaseModel
 import json
