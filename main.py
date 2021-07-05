@@ -23,6 +23,16 @@ dynamodb_client = boto3.client('dynamodb', region_name="ap-south-1",
 dynamodb = boto3.resource('dynamodb', region_name="ap-south-1")
 table = dynamodb.Table(TABLE_NAME)
 
+@app.get('/all')
+def AllRecords():
+    response = table.scan(TableName=TABLE_NAME)
+    data = response['Items']
+
+    while 'LastEvaluatedKey' in response:
+        response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+        data.extend(response['Items'])
+    return data
+
 @app.get('/{Doctor}/{Patient}')
 def Records(Query,Name):
   
