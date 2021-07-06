@@ -7,8 +7,21 @@ import jsons
 from fastapi import FastAPI
 from boto3.dynamodb.conditions import Key,Attr
 # from fastapi.routing import APIRoute, APIRouter
+from fastapi.middleware.cors import CORSMiddleware
 
 app=FastAPI(prefix="/health")
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 
 
 TABLE_NAME = "resultTable"
