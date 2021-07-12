@@ -86,7 +86,7 @@ def Record(Name):
     return item
 
 
-@app.get('/Personal details//{Doctor}')
+@app.post('/Personal details//{Doctor}')
 def EnterRecord(ID:str, Name:str, Phone:str, Email:str, Password:str, Gender:str, Age:str, Experience:str, Designation:str):
     table = dynamodb.Table('Doctor')
     response = table.put_item(
