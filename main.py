@@ -88,7 +88,7 @@ def Record(DoctorName):
     return item
 
 
-@app.post('/Personal_details/{Doctor}')
+@app.post('/Personal_details/{DoctorName}')
 def EnterRecord(ID:str,DoctorName:str,Phone:str,Email:str,Password:str,Gender:str,Age:str,Experience:str,Designation:str):
     table = dynamodb.Table('Doctor')
     response = table.put_item(
@@ -124,7 +124,7 @@ def Record2(PatientName):
     return item2
 
 
-@app.post('/Personal_details//{Patient}')
+@app.post('/Personal_details//{PatientName}')
 def EnterRecord2(ID:str, PatientName:str, Phone:str, Email:str, Password:str, Gender:str, Age:str, Complaints:str, Previous_Ailments:str):
     table = dynamodb.Table('Patient')
     response = table.put_item(
