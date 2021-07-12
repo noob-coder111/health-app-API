@@ -47,7 +47,7 @@ def AllRecords():
     return data
 
 @app.get('/{Doctor}/{Patient}')
-def Records(Query,Name):
+def Records(Occupation,Name):
   
     response = table.scan(
                         TableName=TABLE_NAME,
@@ -86,7 +86,7 @@ def Record(Name):
     return item
 
 
-@app.put('/Personal details///{Doctor}')
+@app.get('/Personal details///{Doctor}')
 def EnterRecord(ID:str, Name:str, Phone:str, Email:str, Password:str, Gender:str, Age:str, Experience:str, Designation:str):
     table = dynamodb.Table('Doctor')
     response = table.put_item(
@@ -122,7 +122,7 @@ def Record2(Name):
     return item2
 
 
-@app.put('/Personal details/////{Patient}')
+@app.get('/Personal details/////{Patient}')
 def EnterRecord2(ID:str, Name:str, Phone:str, Email:str, Password:str, Gender:str, Age:str, Complaints:str, Previous_Ailments:str):
     table = dynamodb.Table('Patient')
     response = table.put_item(
