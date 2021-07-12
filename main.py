@@ -68,12 +68,12 @@ def Records(Occupation,Name):
 
 
 
-TABLE_NAME2 = "Doctor"
+TABLE_NAME2 ="Doctor"
 # Creating the DynamoDB Table Resource
 dynamodb = boto3.resource('dynamodb', region_name="ap-south-1")
 table = dynamodb.Table(TABLE_NAME2)
 
-@app.get('/Personal details//{Doctor}')
+@app.get('/Personal details/{Doctor}')
 def Record(Name):
   
     respons2 = table.scan(
@@ -86,7 +86,7 @@ def Record(Name):
     return item
 
 
-@app.get('/Personal details///{Doctor}')
+@app.get('/Personal details//{Doctor}')
 def EnterRecord(ID:str, Name:str, Phone:str, Email:str, Password:str, Gender:str, Age:str, Experience:str, Designation:str):
     table = dynamodb.Table('Doctor')
     response = table.put_item(
@@ -109,7 +109,7 @@ TABLE_NAME3 = "Patient"
 dynamodb = boto3.resource('dynamodb', region_name="ap-south-1")
 table = dynamodb.Table(TABLE_NAME3)
 
-@app.get('/Personal details////{Patient}')
+@app.get('/Personal details//{Patient}')
 def Record2(Name):
   
     respons2 = table.scan(
@@ -122,7 +122,7 @@ def Record2(Name):
     return item2
 
 
-@app.get('/Personal details/////{Patient}')
+@app.post('/Personal details/{Patient}')
 def EnterRecord2(ID:str, Name:str, Phone:str, Email:str, Password:str, Gender:str, Age:str, Complaints:str, Previous_Ailments:str):
     table = dynamodb.Table('Patient')
     response = table.put_item(
