@@ -4,7 +4,9 @@ import boto3
 import jsons
 from pydantic import BaseModel
 from typing import List, Optional
-from fastapi import FastAPI,Query,Request
+from fastapi import FastAPI,Query,Request,status,HTTPException
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import PlainTextResponse
 from boto3.dynamodb.conditions import Key,Attr
 # from fastapi.routing import APIRoute, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
@@ -60,14 +62,20 @@ dynamodb_client = boto3.client('dynamodb', region_name="ap-south-1",
 dynamodb = boto3.resource('dynamodb', region_name="ap-south-1")
 table = dynamodb.Table(TABLE_NAME)
 
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request, exc):
+    return PlainTextResponse(str(exc), status_code=400)
 
-@app.get('/{Patient}')
+
+@app.get('/{Patient}',status_code=200)
 def Records(Patient:str):
     response = table.scan(
                         TableName=TABLE_NAME,
                         #KeyConditionExpression=Key("").eq("1"),
                         FilterExpression=Attr("Patient").eq(Patient)
                         )
+    if not Patient:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f'Patient with name {Patient} is not available')
     items = response['Items']
     print(items)
     return items
@@ -75,7 +83,7 @@ def Records(Patient:str):
 
 
 
-@app.get('/all/')
+@app.get('/all/',status_code=200)
 def AllRecords():
     response = table.scan(TableName=TABLE_NAME)
     data = response['Items']
@@ -98,7 +106,7 @@ table = dynamodb.Table(TABLE_NAME2)
 
 #     return item
 
-@app.put("/personaldetails/adddoctor")
+@app.put("/personaldetails/adddoctor",status_code=status.HTTP_201_CREATED)
 async def create_item(item:ItemDoctor):
 
     table = dynamodb.Table('Doctor')
@@ -119,7 +127,7 @@ async def create_item(item:ItemDoctor):
     )       
     return "Data added successfully"
     
-@app.get('/personaldetails/{DoctorName}')
+@app.get('/personaldetails/{DoctorName}',status_code=200)
 def Record(DoctorName:str):
   
     respons2 = table.scan(
@@ -127,6 +135,8 @@ def Record(DoctorName:str):
                         #KeyConditionExpression=Key("").eq("1"),
                         FilterExpression=Attr("DoctorName").eq(DoctorName)
                         )
+    if not DoctorName:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f'Patient with name {DoctorName} is not available')
     item = respons2['Items']
     print(item)
     return item
@@ -138,7 +148,7 @@ dynamodb = boto3.resource('dynamodb', region_name="ap-south-1")
 table = dynamodb.Table(TABLE_NAME3)
 
 
-@app.put('/personaldetails/addpatient')
+@app.put('/personaldetails/addpatient',status_code=status.HTTP_201_CREATED)
 def EnterRecord2(item:ItemPatient):
     table = dynamodb.Table('Patient')
     response = table.put_item(
@@ -167,6 +177,8 @@ def Record2(PatientName:str):
                         #KeyConditionExpression=Key("").eq("1"),
                         FilterExpression=Attr("PatientName").eq(PatientName)
                         )
+    if not PatientName:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f'Patient with name {PatientName} is not available')
     item2 = respons2['Items']
     print(item2)
     return item2
