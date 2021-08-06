@@ -27,7 +27,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 class ItemDoctor(BaseModel):
-    ID:str
     DoctorName:str
     Phone:Optional[str] = Query(None, max_length=10, min_length=10)
     Email:str
@@ -94,7 +93,7 @@ def AllRecords():
 
 
 
-TABLE_NAME2="Doctor"
+TABLE_NAME2="Doctors"
 # Creating the DynamoDB Table Resource
 dynamodb = boto3.resource('dynamodb',region_name="ap-south-1")
 table = dynamodb.Table(TABLE_NAME2)
@@ -109,11 +108,10 @@ table = dynamodb.Table(TABLE_NAME2)
 @app.put("/personaldetails/adddoctor",status_code=status.HTTP_201_CREATED)
 async def create_item(item:ItemDoctor):
 
-    table = dynamodb.Table('Doctor')
+    table = dynamodb.Table('Doctors')
 
     table.put_item(
     Item={
-            'ID':item.ID,
             'DoctorName':item.DoctorName,
             'Phone':item.Phone,
             'Email':item.Email,
