@@ -1,10 +1,9 @@
-
 import boto3
-# from pydantic.main import BaseModel
+from pydantic.main import BaseModel
 import jsons
 from pydantic import BaseModel
 from typing import List, Optional
-from fastapi import FastAPI,Query,Request,status,HTTPException
+from fastapi import FastAPI,Query,Request,status,HTTPException,Body
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import PlainTextResponse
 from boto3.dynamodb.conditions import Key,Attr
@@ -26,7 +25,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+#
 class ItemDoctor(BaseModel):
+
     DoctorName:str
     Phone:Optional[str] = Query(None, max_length=10, min_length=10)
     Email:str
@@ -35,10 +36,11 @@ class ItemDoctor(BaseModel):
     Age:str
     Experience:str
     Designation:str
+    class Config:
+        orm_mode = True
 
 class ItemPatient(BaseModel):
-    ID:str
-    PatientName:str
+    Patient:str
     Phone:Optional[str] = Query(None, max_length=10, min_length=10)
     Email:str
     Password:str
@@ -46,7 +48,9 @@ class ItemPatient(BaseModel):
     Age:str
     Complaints:str
     Previous_Ailments:str
-
+    Prev_Doctor:str
+    class Config:
+        orm_mode = True
 
 
 TABLE_NAME="resultTable"
@@ -98,21 +102,15 @@ TABLE_NAME2="Doctors"
 dynamodb = boto3.resource('dynamodb',region_name="ap-south-1")
 table = dynamodb.Table(TABLE_NAME2)
 
-# #here is the error, it isn"t taking reference for class data
-# @app.post('/personaldetails/',response_model=Item)
-# def EnterRecord(item=Item,Phone:str= Query(None,max_length=10, min_length=10)):
-#     table = dynamodb.Table('Doctor')
 
-#     return item
 
-@app.put("/personaldetails/adddoctor",status_code=status.HTTP_201_CREATED)
+@app.put("/personaldetails/adddoctor/")
 async def create_item(item:ItemDoctor):
 
-    table = dynamodb.Table('Doctors')
 
     table.put_item(
     Item={
-            'DoctorName':item.DoctorName,
+            'Doctor':item.DoctorName,
             'Phone':item.Phone,
             'Email':item.Email,
             'Password':item.Password,
@@ -120,7 +118,6 @@ async def create_item(item:ItemDoctor):
             'Age':item.Age,
             'Experience':item.Experience,
             'Designation':item.Designation
-
     }
     )       
     return "Data added successfully"
@@ -139,6 +136,15 @@ def Record(DoctorName:str):
     print(item)
     return item
 
+@app.get('/personaldetails/doctors/allrecords/',status_code=200)
+def AllRecords():
+    response = table.scan(TableName=TABLE_NAME2)
+    data = response['Items']
+    while 'LastEvaluatedKey' in response:
+        response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+        data.extend(response['Items']) 
+    return data
+
 
 TABLE_NAME3="Patient"
 # Creating the DynamoDB Table Resource
@@ -146,20 +152,20 @@ dynamodb = boto3.resource('dynamodb', region_name="ap-south-1")
 table = dynamodb.Table(TABLE_NAME3)
 
 
-@app.put('/personaldetails/addpatient',status_code=status.HTTP_201_CREATED)
-def EnterRecord2(item:ItemPatient):
+@app.put('/personaldetails/addpatient/',status_code=status.HTTP_201_CREATED)
+def EnterRecord2(items:ItemPatient= Body(..., embed=False)):
     table = dynamodb.Table('Patient')
     response = table.put_item(
        Item={
-            'ID':item.ID,
-            'PatientName':item.PatientName,
-            'Phone':item.Phone,
-            'Email':item.Email,
-            'Password':item.Password,
-            'Gender':item.Gender,
-            'Age':item.Age,
-            'Complaints':item.Complaints,
-            'Previous_Ailments':item.Previous_Ailments
+            'PatientName':items.Patient,
+            'Phone':items.Phone,
+            'Email':items.Email,
+            'Password':items.Password,
+            'Gender':items.Gender,
+            'Age':items.Age,
+            'Complaints':items.Complaints,
+            'Previous_Ailments':items.Previous_Ailments,
+            'Doctor_Consulted':items.Prev_Doctor
             }
     )
     
@@ -180,3 +186,12 @@ def Record2(PatientName:str):
     item2 = respons2['Items']
     print(item2)
     return item2
+
+@app.get('/personaldetails/patients/allrecords/',status_code=200)
+def AllRecords():
+    response = table.scan(TableName=TABLE_NAME3)
+    data = response['Items']
+    while 'LastEvaluatedKey' in response:
+        response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+        data.extend(response['Items']) 
+    return data
