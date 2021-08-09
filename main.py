@@ -73,7 +73,7 @@ async def validation_exception_handler(request, exc):
 @app.get('/{Patient}',status_code=200)
 def Records(Patient:str):
     response = table.scan(
-                        TableName=TABLE_NAME,
+                        TableName=TABLE_NAME3,
                         #KeyConditionExpression=Key("").eq("1"),
                         FilterExpression=Attr("Patient").eq(Patient)
                         )
@@ -107,7 +107,7 @@ table = dynamodb.Table(TABLE_NAME2)
 @app.put("/personaldetails/adddoctor/")
 async def create_item(item:ItemDoctor):
 
-
+    table = dynamodb.Table('Doctors')
     table.put_item(
     Item={
             'DoctorName':item.DoctorName,
@@ -153,7 +153,7 @@ table = dynamodb.Table(TABLE_NAME3)
 
 
 @app.put('/personaldetails/addpatient/',status_code=status.HTTP_201_CREATED)
-def EnterRecord2(items:ItemPatient= Body(..., embed=False)):
+def EnterRecord2(items:ItemPatient):
     table = dynamodb.Table('Patient')
     response = table.put_item(
        Item={
