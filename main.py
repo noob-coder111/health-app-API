@@ -40,7 +40,7 @@ class ItemDoctor(BaseModel):
         orm_mode = True
 
 class ItemPatient(BaseModel):
-    Patient:str
+    PatientName:str
     Phone:Optional[str] = Query(None, max_length=10, min_length=10)
     Email:str
     Password:str
@@ -48,7 +48,7 @@ class ItemPatient(BaseModel):
     Age:str
     Complaints:str
     Previous_Ailments:str
-    Prev_Doctor:str
+    Doctor_Consulted:str
     class Config:
         orm_mode = True
 
@@ -110,7 +110,7 @@ async def create_item(item:ItemDoctor):
 
     table.put_item(
     Item={
-            'Doctor':item.DoctorName,
+            'DoctorName':item.DoctorName,
             'Phone':item.Phone,
             'Email':item.Email,
             'Password':item.Password,
@@ -157,7 +157,7 @@ def EnterRecord2(items:ItemPatient= Body(..., embed=False)):
     table = dynamodb.Table('Patient')
     response = table.put_item(
        Item={
-            'PatientName':items.Patient,
+            'PatientName':items.PatientName,
             'Phone':items.Phone,
             'Email':items.Email,
             'Password':items.Password,
@@ -165,7 +165,7 @@ def EnterRecord2(items:ItemPatient= Body(..., embed=False)):
             'Age':items.Age,
             'Complaints':items.Complaints,
             'Previous_Ailments':items.Previous_Ailments,
-            'Doctor_Consulted':items.Prev_Doctor
+            'Doctor_Consulted':items.Doctor_Consulted
             }
     )
     
