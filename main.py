@@ -70,15 +70,15 @@ async def validation_exception_handler(request, exc):
     return PlainTextResponse(str(exc), status_code=400)
 
 
-@app.get('/{Patient}',status_code=200)
-def Records(Patient:str):
+@app.get('/{PatientName}',status_code=200)
+def Records(PatientName:str):
     response = table.scan(
                         TableName=TABLE_NAME3,
                         #KeyConditionExpression=Key("").eq("1"),
-                        FilterExpression=Attr("Patient").eq(Patient)
+                        FilterExpression=Attr("PatientName").eq(PatientName)
                         )
-    if not Patient:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f'Patient with name {Patient} is not available')
+    if not PatientName:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f'Patient with name {PatientName} is not available')
     items = response['Items']
     print(items)
     return items
