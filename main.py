@@ -53,7 +53,7 @@ class ItemPatient(BaseModel):
         orm_mode = True
 
 
-TABLE_NAME="resultTable"
+TABLE_NAME="health_sensor"
 
 # Creating the DynamoDB Client
 dynamodb_client = boto3.client('dynamodb', region_name="ap-south-1",
@@ -86,7 +86,7 @@ def Records(PatientName:str):
 
 
 
-@app.get('/all/',status_code=200)
+@app.get('/healthsensor/all/',status_code=200)
 def AllRecords():
     response = table.scan(TableName=TABLE_NAME)
     data = response['Items']
