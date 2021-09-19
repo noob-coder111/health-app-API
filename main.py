@@ -53,7 +53,7 @@ class ItemPatient(BaseModel):
         orm_mode = True
 
 
-TABLE_NAME="health_sensor"
+TABLE_NAME="sensor_table"
 
 # Creating the DynamoDB Client
 dynamodb_client = boto3.client('dynamodb', region_name="ap-south-1",
